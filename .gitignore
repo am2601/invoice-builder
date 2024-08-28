@@ -1,4 +1,4 @@
 *.pyc
 .venv
 *.sqlite3
-static/
+static/admin/
