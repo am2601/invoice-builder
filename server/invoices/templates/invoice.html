@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice {{ invoice.number }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .invoice-details, .products {
+            margin-bottom: 20px;
+        }
+        .products table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .products th, .products td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .products th {
+            background-color: #f4f4f4;
+        }
+        .total {
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Invoice</h1>
+            <p>Invoice Number: {{ invoice.number }}</p>
+        </div>
+        <div class="invoice-details">
+            <p><strong>Company:</strong> {{ invoice.company_name }}</p>
+            <p><strong>Billing Address:</strong> {{ invoice.billing_address }}</p>
+            <p><strong>Date:</strong> {{ invoice.date }}</p>
+            <p><strong>Total Price:</strong> ${{ invoice.total_price }}</p>
+        </div>
+        <div class="products">
+            <h2>Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Count</th>
+                        <th>Price</th>
+                        <th>Total price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in invoice.product_set.all %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.count }}</td>
+                        <td>${{ product.price }}</td>
+                        <td>${{ product.total_price }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No products found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
