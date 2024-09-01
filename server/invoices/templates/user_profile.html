@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Invoice Creation</title>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-purple-600 p-4">
+        <div class="text-3xl text-white text-center font-bold"><a href="{% url 'overview' %}">Invoice Generator</a></div>
+        <a href="{% url 'user_profile' %}" class="absolute right-0 top-0 p-4">
+            <div class="bg-gray-300 text-gray-800 rounded-full p-3 w-12 h-12 text-center">
+                <img src="{% static 'icons/user.png' %}" alt="User Icon" class="w-6 h-6">
+            </div>
+        </a>
+    </header>
+    <div class="container mx-auto w-full py-4 h-fit">
+        <div class="bg-white border border-gray-300 rounded-lg shadow-md py-4 px-8">
+            <h1 class="text-xl font-semibold mb-6">Invoice Creation</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div>First name</div>
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </div>
+                    <div>
+                        <div>Last name</div>
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </div>
+                    <div>
+                        <div>Bank account</div>
+                        {{ form.bank_account }}
+                        {{ form.bank_account.errors }}
+                    </div>
+                    <div>
+                        <div>Billing address</div>
+                        {{ form.billing_address }}
+                        {{ form.billing_address.errors }}
+                    </div>
+                </div>
+                <div class="pt-10">
+                    <button type="submit" class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">
+                        Save
+                    </button>
+                    <!-- <a href="{% url 'logout' %}" class="ml-20 bg-orange-600 text-white py-3 px-4 rounded hover:bg-orange-700">
+                        <button>Logout</button>
+                    </a> -->
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Invoice Generator</title>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 w-full">
+    <header class="bg-purple-600 p-4">
+        <div class="text-3xl text-white text-center font-bold"><a href="{% url 'overview' %}">Invoice Generator</a></div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'user_profile' %}" class="absolute right-0 top-0 p-4">
+                <div class="bg-gray-300 text-gray-800 rounded-full p-3 w-12 h-12 text-center">
+                    <img src="{% static 'icons/user.png' %}" alt="User Icon" class="w-6 h-6">
+                </div>
+            </a>
+        {% endif %}
+    </header>
+    <div class="container mx-auto w-full pt-10 h-fit">
+        <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-xl font-semibold">Your Invoices</div>
+                <a href="{% url 'create_invoice' %}" class="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700">Create New</a>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 text-center font-semibold border-b border-gray-300 py-2 mt-10">
+                <span>Number</span>
+                <span>Date</span>
+                <span>Company</span>
+                <span>Price</span>
+            </div>
+            {% if invoices %}
+                {% for invoice in invoices %}
+                    <a href="{% url 'modify_invoice' invoice_id=invoice.id %}">
+                        <div class="flex justify-between items-center border-b border-gray-300 py-2">
+                            <div class="w-1/4 text-center">{{ invoice.number }}</div>
+                            <div class="w-1/4 text-center">{{ invoice.date }}</div>
+                            <div class="w-1/4 text-center">{{ invoice.company_name }}</div>
+                            <div class="w-1/4 text-center">{{ invoice.total_price }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+            <div class="flex justify-center items-center pt-4">
+                Nothing there yet
+            </div>
+            {% endif %}
+            <div class="my-40"></div>
+        </div>
+    </body>
+</html>

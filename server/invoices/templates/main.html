@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
-        <link href="/static/css/styles.css" rel="stylesheet" />
-        <title>Document</title>
+        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+        <title>Invoice Generator</title>
     </head>
     <body>
-        <div class="v1_3">
-            <span class="v1_251">This is the best invoice generator</span>
-            <div class="v1_250"><div class="v1_4"></div>
-            <div class="v1_249">
-                <span class="v1_6">Generate invoice</span>
-            </div>
-        </div></div>
+        <div class="flex flex-col items-center justify-center min-h-screen bg-white p-8">
+            <div class="text-5xl font-bold text-gray-800 mb-8">This is the best invoice generator</div>
+            <a href="{% url 'overview' %}">
+                <button class="mt-20 text-center text-3xl font-medium text-white py-8 px-16 rounded-full bg-purple-600 hover:bg-purple-700">
+                    Generate invoice
+                </button>
+            </a>
+        </div>
     </body>
 </html>

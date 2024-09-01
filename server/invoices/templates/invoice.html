@@ -1,88 +1,143 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Invoice {{ invoice.number }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
-        }
-        .invoice-details, .products {
-            margin-bottom: 20px;
-        }
-        .products table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .products th, .products td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .products th {
-            background-color: #f4f4f4;
-        }
-        .total {
-            font-weight: bold;
-            text-align: right;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Invoice Creation</title>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Invoice</h1>
-            <p>Invoice Number: {{ invoice.number }}</p>
-        </div>
-        <div class="invoice-details">
-            <p><strong>Company:</strong> {{ invoice.company_name }}</p>
-            <p><strong>Billing Address:</strong> {{ invoice.billing_address }}</p>
-            <p><strong>Date:</strong> {{ invoice.date }}</p>
-            <p><strong>Total Price:</strong> ${{ invoice.total_price }}</p>
-        </div>
-        <div class="products">
-            <h2>Products</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Count</th>
-                        <th>Price</th>
-                        <th>Total price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in invoice.product_set.all %}
-                    <tr>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.count }}</td>
-                        <td>${{ product.price }}</td>
-                        <td>${{ product.total_price }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3">No products found.</td>
-                    </tr>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-purple-600 p-4">
+        <div class="text-3xl text-white text-center font-bold"><a href="{% url 'overview' %}">Invoice Generator</a></div>
+        <a href="{% url 'user_profile' %}" class="absolute right-0 top-0 p-4">
+            <div class="bg-gray-300 text-gray-800 rounded-full p-3 w-12 h-12 text-center">
+                <img src="{% static 'icons/user.png' %}" alt="User Icon" class="w-6 h-6">
+            </div>
+        </a>
+    </header>
+    <div class="container mx-auto w-full py-4 h-fit">
+        <div class="bg-white border border-gray-300 rounded-lg shadow-md py-4 px-8">
+            <h1 class="text-xl font-semibold mb-6">Invoice Creation</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div>Number</div>
+                        {{ form.number }}
+                        {{ form.number.errors }}
+                    </div>
+                    <div>
+                        <div>Date</div>
+                        {{ form.date }}
+                        {{ form.date.errors }}
+                    </div>
+                    <div>
+                        <div>First name</div>
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </div>
+                    <div>
+                        <div>Last name</div>
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </div>
+                    <div>
+                        <div>Bank account</div>
+                        {{ form.bank_account }}
+                        {{ form.bank_account.errors }}
+                    </div>
+                    <div>
+                        <div>Billing address</div>
+                        {{ form.billing_address }}
+                        {{ form.billing_address.errors }}
+                    </div>
+                    <div>
+                        <div>Company name</div>
+                        {{ form.company_name }}
+                        {{ form.company_name.errors }}
+                    </div>
+                </div>
+                {{ product_formset.management_form }}
+                <div class="grid grid-cols-6 gap-4 pt-8 pr-32">
+                    {% for product_form in product_formset %}
+                        {% for hidden in product_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
                     {% endfor %}
-                </tbody>
-            </table>
+                    <div class="col-span-2">
+                        <div>Product Name</div>
+                        {% for product_form in product_formset %}
+                            <div class="py-4">
+                                {{ product_form.name }}
+                                {{ product_form.name.errors }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <div>Price</div>
+                        {% for product_form in product_formset %}
+                            <div class="py-4">
+                                {{ product_form.price }}
+                                {{ product_form.price.errors }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <div>Count</div>
+                        {% for product_form in product_formset %}
+                            <div class="py-4">
+                                {{ product_form.count }}
+                                {{ product_form.count.errors }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <div>Total Price</div>
+                        {% for product_form in product_formset %}
+                        <div class="py-4">
+                            {% if product_form.instance.total_price > 0 %}
+                                <input class="w-40" type="number" value="{{ product_form.instance.total_price }}">
+                            {% else %}
+                                <input class="w-40" type="number" value="">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <div>Delete?</div>
+                        {% for product_form in product_formset %}
+                        <div class="py-4">
+                            {% if product_form.instance.id %}
+                            <a href="{% url 'delete_product' product_id=product_form.instance.id %}" class="bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700">
+                                Delete
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if invoice.id %}
+                <div class="px-40 mr-40 mt-6 flex justify-between">
+                    <a href="{% url 'invoice_pdf' invoice_id=invoice.id %}" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+                        Download
+                    </a>
+                    <button type="submit" class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">
+                        Save
+                    </button>
+                    <a href="{% url 'delete_invoice' invoice_id=invoice.id %}" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">
+                        Delete
+                    </a>
+                </div>
+                {% else %}
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">
+                            Save
+                        </button>
+                    </div>
+                {% endif %}
+            </form>
         </div>
     </div>
 </body>

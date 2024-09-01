@@ -25,16 +25,15 @@ class UserProfileManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    billing_address = models.CharField(max_length=200)
-    company_name = models.CharField(max_length=200)
-
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    bank_account = models.CharField(max_length=20, blank=True, null=True)
+    billing_address = models.CharField(max_length=200, blank=True, null=True)
     is_staff = models.BooleanField(default=True)
-
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
@@ -47,12 +46,15 @@ class Invoice(models.Model):
     bank_account = models.CharField(max_length=20)
     billing_address = models.CharField(max_length=200)
     company_name = models.CharField(max_length=200)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     total_price = models.FloatField(blank=True, null=True)
     number = models.CharField(max_length=6)
 
     def __str__(self) -> str:
-        return self.number
+        return f'{self.user} - {self.number}'
+
+    class Meta:
+        unique_together = ('user', 'number')
 
 
 class Product(models.Model):
@@ -66,7 +68,9 @@ class Product(models.Model):
     
     @property
     def total_price(self):
-        return self.count * self.price
+        if self.count and self.price:
+            return self.count * self.price
+        return 0
     
     def save(self, *args, **kwargs) -> None:
         invoice = self.invoice
